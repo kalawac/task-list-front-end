@@ -11,7 +11,8 @@ const TaskList = ({ tasks }) => {
           key={task.id}
           id={task.id}
           title={task.title}
-          isComplete={task.isComplete}
+          isCompleteData={task.isCompleteData}
+          onUpdate={task.onUpdateTasks}
         />
       );
     });
@@ -24,9 +25,10 @@ TaskList.propTypes = {
     PropTypes.shape({
       id: PropTypes.number.isRequired,
       title: PropTypes.string.isRequired,
-      isComplete: PropTypes.bool.isRequired,
+      isCompleteData: PropTypes.bool.isRequired,
     })
   ).isRequired,
+  onUpdateTasks: PropTypes.func.isRequired,
 };
 
 export default TaskList;
