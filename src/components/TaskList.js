@@ -3,21 +3,21 @@ import PropTypes from 'prop-types';
 import Task from './Task';
 import './TaskList.css';
 
-const TaskList = (tasks) => {
-  const getTaskListJSX = (tasks) => {
-    return tasks.map((task) => {
+const TaskList = (props) => {
+  const getTaskListJSX = (props) => {
+    return props.tasks.map((task) => {
       return (
         <Task
           key={task.id}
           id={task.id}
           title={task.title}
           isCompleteData={task.isCompleteData}
-          onUpdate={task.onUpdateTasks}
+          onUpdate={props.onUpdateTasks}
         />
       );
     });
   };
-  return <ul className="tasks__list no-bullet">{getTaskListJSX(tasks)}</ul>;
+  return <ul className="tasks__list no-bullet">{getTaskListJSX(props)}</ul>;
 };
 
 TaskList.propTypes = {
