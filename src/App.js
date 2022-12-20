@@ -29,12 +29,31 @@ const convertFromApi = (apiTask) => {
 const getAllTasksApi = () => {
   return axios.get('https://task-list-api-c17.herokuapp.com/tasks')
   .then(response => {
-    return response.data.map(convertFromApi);
+    console.log(response);
+    //return response.data.map(convertFromApi);
+  })
+  .catch(err => {
+    console.log(err);
   });
 };
 
 const App = () => {
   const [taskData, setTaskData] = useState(TASKS);
+
+  // const getAllTasks = () => {
+  //   return getAllTasksApi()
+  //   .then(tasks => {
+  //     setTaskData(tasks);
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   getAllTasks();
+  // }, []);
+
+  useEffect(() => {
+    
+  })
 
   const updateTask = (updatedTask) => {
     const tasks = taskData.map((task) => {
