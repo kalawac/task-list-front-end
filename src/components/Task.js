@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import './Task.css';
@@ -13,23 +13,20 @@ const Task = (props) => {
     props.onUpdate(updatedTask);
   };
 
-  const buttonClass = props.isCompleteData ? 'tasks__item__toggle--completed' : '';
+  const buttonClass = props.isCompleteData
+    ? 'tasks__item__toggle--completed'
+    : '';
 
   return (
-    <div>
-      <li className="tasks__item">
-        <button
-          className={`tasks__item__toggle ${buttonClass}`}
-          onClick={{ onCompleteButtonClick }}
-        >
-          {props.title}
-        </button>
-        <button className="tasks__item__remove button">x</button>
-      </li>
-      <li>
-        Is the data complete???? {props.isCompleteData}
-      </li>
-    </div>
+    <li className="tasks__item">
+      <button
+        className={`tasks__item__toggle ${buttonClass}`}
+        onClick={onCompleteButtonClick}
+      >
+        {props.title}
+      </button>
+      <button className="tasks__item__remove button">x</button>
+    </li>
   );
 };
 
