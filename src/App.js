@@ -17,22 +17,54 @@ const TASKS = [
   },
 ];
 
+const kBaseUrl = 'https://task-list-api-c17.herokuapp.com';
+
 const convertFromApi = (apiTask) => {
   // const {id, description, is_complete, title} = apiTask;
-  const {is_complete, ...rest} = apiTask;
+  const {is_complete: isComplete, ...rest} = apiTask;
 
   // const newTask = {id, description, isComplete: is_complete, title};
-  const newTask = {isComplete: is_complete, ...rest};
+  const newTask = {isCompleteData: isComplete, ...rest};
   return newTask;
 };
 
 const getAllTasksApi = () => {
-  return axios.get('https://task-list-api-c17.herokuapp.com/tasks')
+  return axios.get(`${kBaseUrl}/tasks`)
   .then(response => {
     console.log(response);
-    //return response.data.map(convertFromApi);
+    return response.data.map(convertFromApi);
   })
   .catch(err => {
+    console.log(err.data);
+  });
+};
+
+// const createTaskApi = (exampleTask) => {
+//   return axios.post(`${kBaseUrl}/tasks`, {data: exampleTask})
+//   .then((response) => {
+//     console.log(response);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+// };
+
+const updateTaskApiIncomplete = (id) => {
+  return axios.patch(`${kBaseUrl}/tasks/${id}/mark_incomplete`)
+  .then((response) => {
+    return convertFromApi(response.data);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+};
+
+const updateTaskApiComplete = (id) => {
+  return axios.patch(`${kBaseUrl}/tasks/${id}/mark_complete`)
+  .then((response) => {
+    return convertFromApi(response.data);
+  })
+  .catch((err) => {
     console.log(err);
   });
 };
@@ -40,24 +72,39 @@ const getAllTasksApi = () => {
 const App = () => {
   const [taskData, setTaskData] = useState(TASKS);
 
-  // const getAllTasks = () => {
-  //   return getAllTasksApi()
-  //   .then(tasks => {
-  //     setTaskData(tasks);
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   getAllTasks();
-  // }, []);
+  const getAllTasks = () => {
+    return getAllTasksApi()
+    .then(tasks => {
+      setTaskData(tasks);
+    })
+    .catch(err => {
+      console.log(err.data);
+    });
+  };
 
   useEffect(() => {
-    
-  })
+    getAllTasks();
+  }, []);
+
+  // const createTask = (newTask) => {
+  //   return createTaskApi(exampleTask)
+  //   .then((response) => {
+  //     console.log(response);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+  // };
 
   const updateTask = (updatedTask) => {
     const tasks = taskData.map((task) => {
       if (task.id === updatedTask.id) {
+        if (task.isCompleteData){
+          updateTaskApiComplete(task.id);
+        }
+        else {
+          updateTaskApiIncomplete(task.id);
+        }
         return updatedTask;
       } else {
         return task;
