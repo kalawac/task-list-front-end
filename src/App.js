@@ -4,105 +4,105 @@ import TaskList from './components/TaskList.js';
 import './App.css';
 import NewTaskForm from './components/NewTaskForm.js';
 
-const TASKS = [
-  {
-    id: 1,
-    title: 'Mow the lawn',
-    isCompleteData: false,
-  },
-  {
-    id: 2,
-    title: 'Cook Pasta',
-    isCompleteData: true,
-  },
-];
-
 const kBaseUrl = 'https://task-list-api-c17.herokuapp.com';
 
 const convertFromApi = (apiTask) => {
   // const {id, description, is_complete, title} = apiTask;
-  const {is_complete: isComplete, ...rest} = apiTask;
+  const { is_complete: isComplete, ...rest } = apiTask;
 
   // const newTask = {id, description, isComplete: is_complete, title};
-  const newTask = {isCompleteData: isComplete, ...rest};
+  const newTask = { isCompleteData: isComplete, ...rest };
   return newTask;
 };
 
 const getAllTasksApi = () => {
-  return axios.get(`${kBaseUrl}/tasks`)
-  .then(response => {
-    console.log(response);
-    return response.data.map(convertFromApi);
-  })
-  .catch(err => {
-    console.log(err.data);
-  });
+  return axios
+    .get(`${kBaseUrl}/tasks`)
+    .then((response) => {
+      return response.data.map(convertFromApi);
+    })
+    .catch((err) => {
+      console.log(err.data);
+    });
 };
 
-// const createTaskApi = (exampleTask) => {
-//   return axios.post(`${kBaseUrl}/tasks`, {data: exampleTask})
-//   .then((response) => {
-//     console.log(response);
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
-// };
+const createTaskApi = (taskData) => {
+  const requestBody = taskData;
+
+  return axios
+    .post(`${kBaseUrl}/tasks`, requestBody)
+    .then((response) => {
+      return convertFromApi(response.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 const updateTaskApiIncomplete = (id) => {
-  return axios.patch(`${kBaseUrl}/tasks/${id}/mark_incomplete`)
-  .then((response) => {
-    return convertFromApi(response.data);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  return axios
+    .patch(`${kBaseUrl}/tasks/${id}/mark_incomplete`)
+    .then((response) => {
+      return convertFromApi(response.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 const updateTaskApiComplete = (id) => {
-  return axios.patch(`${kBaseUrl}/tasks/${id}/mark_complete`)
-  .then((response) => {
-    return convertFromApi(response.data);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  return axios
+    .patch(`${kBaseUrl}/tasks/${id}/mark_complete`)
+    .then((response) => {
+      return convertFromApi(response.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const deleteTaskApi = (id) => {
+  return axios
+    .delete(`${kBaseUrl}/tasks/${id}`)
+    .then((response) => {
+      return convertFromApi(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
 
 const App = () => {
-  const [taskData, setTaskData] = useState(TASKS);
+  const [taskData, setTaskData] = useState([]);
 
   const getAllTasks = () => {
     return getAllTasksApi()
-    .then(tasks => {
-      setTaskData(tasks);
-    })
-    .catch(err => {
-      console.log(err.data);
-    });
+      .then((tasks) => {
+        setTaskData(tasks);
+      })
+      .catch((err) => {
+        console.log(err.data);
+      });
   };
 
   useEffect(() => {
     getAllTasks();
   }, []);
 
-  // const createTask = (newTask) => {
-  //   return createTaskApi(exampleTask)
-  //   .then((response) => {
-  //     console.log(response);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
-  // };
+  const handleTaskSubmit = (taskData) => {
+    createTaskApi(taskData)
+      .then((newTask) => {
+        setTaskData([...taskData, newTask]);
+      })
+      .catch((err) => console.log(err));
+  };
 
   const updateTask = (updatedTask) => {
     const tasks = taskData.map((task) => {
       if (task.id === updatedTask.id) {
-        if (task.isCompleteData){
+        if (task.isCompleteData) {
           updateTaskApiComplete(task.id);
-        }
-        else {
+        } else {
           updateTaskApiIncomplete(task.id);
         }
         return updatedTask;
@@ -114,9 +114,10 @@ const App = () => {
     setTaskData(tasks);
   };
 
-  const handleTaskSubmit = (taskData) => {
-    console.log(taskData);
-    return taskData;
+  const deleteTask = (id) => {
+    return deleteTaskApi(id).then(() => {
+      return getAllTasks();
+    });
   };
 
   return (
@@ -125,9 +126,13 @@ const App = () => {
         <h1>Ada&apos;s Task List</h1>
       </header>
       <main>
-        <NewTaskForm handleTaskSubmit={handleTaskSubmit}/>
+        <NewTaskForm handleTaskSubmit={handleTaskSubmit} />
         <div>
-          <TaskList tasks={taskData} onUpdateTasks={updateTask} />
+          <TaskList
+            tasks={taskData}
+            onUpdateTasks={updateTask}
+            onDeleteTask={deleteTask}
+          />
         </div>
       </main>
     </div>
