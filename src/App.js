@@ -91,10 +91,16 @@ const App = () => {
 
   const handleTaskSubmit = (taskData) => {
     createTaskApi(taskData)
-      .then((newTask) => {
-        setTaskData([...taskData, newTask]);
+      .then(() => {
+        return getAllTasks();
       })
       .catch((err) => console.log(err));
+  };
+
+  const createTask = (id) => {
+    return handleTaskSubmit(id).then(() => {
+      return getAllTasks();
+    });
   };
 
   const updateTask = (updatedTask) => {
